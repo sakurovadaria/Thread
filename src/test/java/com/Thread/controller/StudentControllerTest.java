@@ -135,4 +135,36 @@ public class StudentControllerTest {
                 .thenReturn(students);
     }
 
+    @Test
+    void testPrintStudentsParallel() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/students/print-parallel"))
+                .andExpect(status().isOk());
+
+        String output = out.toString();
+
+        // Проверяем, что все имена действительно напечатались
+        students.forEach(s ->
+                assertThat(output).contains(s.getName())
+        );
+    }
+
+    @Test
+    void testPrintStudentsSynchronized() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/students/print-synchronized"))
+                .andExpect(status().isOk());
+
+        String output = out.toString();
+
+        // Проверяем, что все имена действительно напечатались
+        students.forEach(s ->
+                assertThat(output).contains(s.getName())
+        );
+    }
+
 }

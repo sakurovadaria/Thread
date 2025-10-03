@@ -131,4 +131,50 @@ public class StudentControllerRestTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+    @Test
+    void testPrintStudentsParallel() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(out));
+
+        ResponseEntity<String> response = testRestTemplate.getForEntity(
+                baseUrl() + "/print-parallel", String.class
+        );
+
+        // Возвращаем стандартный вывод
+        System.setOut(originalOut);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        String consoleOutput = out.toString();
+        System.out.println("Captured parallel output: \n" + consoleOutput);
+
+        // Проверяем, что хотя бы 6 имен напечатаны
+        assertThat(consoleOutput.split("\n").length)
+                .isGreaterThanOrEqualTo(6);
+    }
+
+    @Test
+    void testPrintStudentsSynchronized() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(out));
+
+        ResponseEntity<String> response = testRestTemplate.getForEntity(
+                baseUrl() + "/print-synchronized", String.class
+        );
+
+        // Возвращаем стандартный вывод
+        System.setOut(originalOut);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        String consoleOutput = out.toString();
+        System.out.println("Captured synchronized output: \n" + consoleOutput);
+
+        // Проверяем, что хотя бы 6 имен напечатаны
+        assertThat(consoleOutput.split("\n").length)
+                .isGreaterThanOrEqualTo(6);
+    }
+
 }

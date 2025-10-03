@@ -72,4 +72,16 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/print-parallel")
+    public ResponseEntity<Void> printParallel() {
+        studentService.printStudentsParallel();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/print-synchronized")
+    public ResponseEntity<Void> printSynchronized() {
+        studentService.printStudentsSynchronized();
+        return ResponseEntity.ok().build();
+    }
+
 }

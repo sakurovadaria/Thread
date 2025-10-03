@@ -100,4 +100,77 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findAll();
     }
 
+    @Override
+    public void printStudentsParallel() {
+        logger.info("Вывод студентов (параллельный режим)");
+
+        List<Student> students = studentRepository.findAll()
+                .stream()
+                .limit(6)
+                .toList();
+
+        if (students.size() < 6) {
+            logger.warn("Недостаточно студентов для демонстрации (нужно >= 6)");
+            return;
+        }
+
+        // Первые два в основном потоке
+        System.out.println(students.get(0).getName());
+        System.out.println(students.get(1).getName());
+
+        // 3 и 4 в отдельном потоке
+        Thread thread1 = new Thread(() -> {
+            System.out.println(students.get(2).getName());
+            System.out.println(students.get(3).getName());
+        });
+
+        // 5 и 6 в другом потоке
+        Thread thread2 = new Thread(() -> {
+            System.out.println(students.get(4).getName());
+            System.out.println(students.get(5).getName());
+        });
+
+        thread1.start();
+        thread2.start();
+    }
+
+    @Override
+    public void printStudentsSynchronized() {
+        logger.info("Вывод студентов (синхронизированный режим)");
+
+        List<Student> students = studentRepository.findAll()
+                .stream()
+                .limit(6)
+                .toList();
+
+        if (students.size() < 6) {
+            logger.warn("Недостаточно студентов для демонстрации (нужно >= 6)");
+            return;
+        }
+
+        // Первые два в основном потоке
+        printName(students.get(0).getName());
+        printName(students.get(1).getName());
+
+        // 3 и 4 в отдельном потоке
+        Thread thread1 = new Thread(() -> {
+            printName(students.get(2).getName());
+            printName(students.get(3).getName());
+        });
+
+        // 5 и 6 в другом потоке
+        Thread thread2 = new Thread(() -> {
+            printName(students.get(4).getName());
+            printName(students.get(5).getName());
+        });
+
+        thread1.start();
+        thread2.start();
+    }
+
+    private synchronized void printName(String name) {
+        System.out.println(name);
+    }
+
+
 }

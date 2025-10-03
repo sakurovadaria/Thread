@@ -25,4 +25,8 @@ public interface StudentService {
 
     List<String> getStudentsNamesStartingWithA();
 
+    void printStudentsParallel();
+
+    void printStudentsSynchronized();
+
 }
